@@ -10,6 +10,6 @@ class Product(Base):
     color= Column(String)
     purchase_price= Column(Float, nullable=False)
     selling_price= Column(Float, nullable=False)
-    quantity_brought= Column(Integer, default=0)
+    quantity_bought= Column(Integer, default=0)
     quantity_sold= Column(Integer, default=0)
     city= Column(String)
