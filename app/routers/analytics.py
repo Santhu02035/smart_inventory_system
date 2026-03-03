@@ -52,6 +52,22 @@ def get_monthly_profit(year: int, month: int, db: Session = Depends(get_db)):
 def low_stock(threshold: int = 10, db: Session = Depends(get_db)):
     return analytics_service.get_low_stock_products(db, threshold)
 
+@router.get("/dead-stock")
+def dead_stock(db: Session = Depends(get_db)):
+    return analytics_service.get_dead_stock_products(db)
+
+@router.get("/top-selling")
+def top_selling(db: Session = Depends(get_db)):
+    return analytics_service.get_top_selling_products(db)
+
 @router.get("/profit/{product_id}")
 def get_profit(product_id: int, db: Session = Depends(get_db)):
     return analytics_service.calculate_profit(db, product_id)
+
+@router.get("/top-profitable")
+def top_profitable(db: Session = Depends(get_db)):
+    return analytics_service.get_top_profitable_products(db)
+
+@router.get("/inventory-valuation")
+def inventory_valuation(db: Session = Depends(get_db)):
+    return analytics_service.get_inventory_valuation(db)
