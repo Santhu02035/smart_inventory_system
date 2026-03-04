@@ -6,13 +6,15 @@ from app.models import product as product_model
 from app.models import purchase as purchase_model
 from app.models import sale as sale_model
 from app.services import analytics_service
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 router = APIRouter(
     prefix="/analytics",
     tags=["Analytics"]
 )
 
 @router.get("/stock/{product_id}")
-def get_stock(product_id: int, db: Session = Depends(get_db)):
+def get_stock(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
 
     # Check if product exists
     product = db.query(product_model.Product).filter(
@@ -45,29 +47,29 @@ def get_stock(product_id: int, db: Session = Depends(get_db)):
     }
 
 @router.get("/profit/monthly")
-def get_monthly_profit(year: int, month: int, db: Session = Depends(get_db)):
+def get_monthly_profit(year: int, month: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.calculate_monthly_profit(db, year, month)
 
 @router.get("/low-stock")
-def low_stock(threshold: int = 10, db: Session = Depends(get_db)):
+def low_stock(threshold: int = 10, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_low_stock_products(db, threshold)
 
 @router.get("/dead-stock")
-def dead_stock(db: Session = Depends(get_db)):
+def dead_stock(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_dead_stock_products(db)
 
 @router.get("/top-selling")
-def top_selling(db: Session = Depends(get_db)):
+def top_selling(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_top_selling_products(db)
 
 @router.get("/profit/{product_id}")
-def get_profit(product_id: int, db: Session = Depends(get_db)):
+def get_profit(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.calculate_profit(db, product_id)
 
 @router.get("/top-profitable")
-def top_profitable(db: Session = Depends(get_db)):
+def top_profitable(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_top_profitable_products(db)
 
 @router.get("/inventory-valuation")
-def inventory_valuation(db: Session = Depends(get_db)):
+def inventory_valuation(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_inventory_valuation(db)
