@@ -4,6 +4,7 @@ from app.database import get_db
 from app.schemas.product import ProductCreate, ProductResponse
 from app.services import product_service
 from app.auth.roles import require_admin
+from app.services.audit_service import create_audit_log
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -13,7 +14,18 @@ def create_product(
     db: Session = Depends(get_db),
     current_user = Depends(require_admin)
 ):
-    return product_service.create_product(db, product)
+
+    new_product = product_service.create_product(db, product)
+
+    create_audit_log(
+        db,
+        username=current_user.username,
+        action="CREATE_PRODUCT",
+        entity="Product",
+        details=f"Created product {product.name}"
+    )
+
+    return new_product
 
 @router.get("/", response_model=list[ProductResponse])
 def get_products(db: Session = Depends(get_db)):

@@ -7,8 +7,9 @@ from app.models import purchase as purchase_model
 from app.models import sale as sale_model
 from app.services import analytics_service
 from app.auth.dependencies import get_current_user
-from app.auth.roles import require_staff
+from app.auth.roles import require_staff, require_admin
 from app.models.user import User
+from app.models.audit_log import AuditLog
 router = APIRouter(
     prefix="/analytics",
     tags=["Analytics"]
@@ -77,3 +78,12 @@ def top_profitable(db: Session = Depends(get_db), current_user: User = Depends(g
 @router.get("/inventory-valuation")
 def inventory_valuation(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return analytics_service.get_inventory_valuation(db)
+
+@router.get("/audit-logs")
+def get_audit_logs(
+    db: Session = Depends(get_db),
+    current_user = Depends(require_admin)
+):
+    logs = db.query(AuditLog).order_by(AuditLog.timestamp.desc()).all()
+
+    return logs
