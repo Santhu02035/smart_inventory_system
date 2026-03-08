@@ -3,11 +3,16 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.product import ProductCreate, ProductResponse
 from app.services import product_service
+from app.auth.roles import require_admin
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.post("/", response_model=ProductResponse)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(require_admin)
+):
     return product_service.create_product(db, product)
 
 @router.get("/", response_model=list[ProductResponse])

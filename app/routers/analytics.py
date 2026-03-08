@@ -7,6 +7,7 @@ from app.models import purchase as purchase_model
 from app.models import sale as sale_model
 from app.services import analytics_service
 from app.auth.dependencies import get_current_user
+from app.auth.roles import require_staff
 from app.models.user import User
 router = APIRouter(
     prefix="/analytics",
@@ -59,7 +60,10 @@ def dead_stock(db: Session = Depends(get_db), current_user: User = Depends(get_c
     return analytics_service.get_dead_stock_products(db)
 
 @router.get("/top-selling")
-def top_selling(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def top_selling(
+    db: Session = Depends(get_db),
+    current_user = Depends(require_staff)
+):
     return analytics_service.get_top_selling_products(db)
 
 @router.get("/profit/{product_id}")

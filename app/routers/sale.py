@@ -3,11 +3,16 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.sale import SaleCreate, SaleResponse
 from app.services import sale_service
+from app.auth.roles import require_staff
 
 router = APIRouter(prefix="/sales", tags=["Sales"])
 
-@router.post("/", response_model=SaleResponse)
-def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
+@router.post("/")
+def create_sale(
+    sale: SaleCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(require_staff)
+):
     return sale_service.create_sale(db, sale)
 
 @router.get("/", response_model=list[SaleResponse])
