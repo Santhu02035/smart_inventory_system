@@ -12,7 +12,7 @@ def require_admin(current_user=Depends(get_current_user)):
 
 
 def require_staff(current_user=Depends(get_current_user)):
-    if current_user.role not in ["admin", "staff"]:
+    if current_user.role not in ["admin", "staff"]:   # ✅ FIX HERE
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Staff access required"

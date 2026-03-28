@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.db.session import get_db
+from app.database import get_db
 from app.models.audit_log import AuditLog
 from app.schemas.audit_log_schema import AuditLogResponse
 from app.auth.dependencies import require_admin
